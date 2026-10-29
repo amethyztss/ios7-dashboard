@@ -1,492 +1,181 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<html><head><meta charset="utf-8"><title>Bedroom</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Dashboard">
+<meta name="apple-mobile-web-app-title" content="Bedroom">
 <style>
-:root { --bar: rgba(247,247,247,.92); --fg: #000; --tint: #007aff; --hair: rgba(0,0,0,.3); --inact: #929292; --navh: 44px; --tabh: 49px; }
-@supports (padding-bottom: env(safe-area-inset-bottom)) { :root { --tabh: calc(49px + env(safe-area-inset-bottom)); } }
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
-html, body { height: 100%; margin: 0; overflow: hidden; }
-body { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 17px; background: #efeff4; color: #000; }
-button { font-family: inherit; cursor: pointer; }
-#app { position: absolute; top: 0; left: 0; right: 0; bottom: 0; }
-#app.dark { --bar: rgba(0,0,0,.28); --fg: #fff; --tint: #fff; --hair: rgba(255,255,255,.35); --inact: rgba(255,255,255,.65); }
-
-/* Bars */
-.nav, .tabbar { position: absolute; left: 0; right: 0; z-index: 10; background: var(--bar); color: var(--fg);
-  -webkit-backdrop-filter: saturate(1.8) blur(20px); backdrop-filter: saturate(1.8) blur(20px); }
-.nav { top: 0; height: var(--navh); border-bottom: .5px solid var(--hair); display: flex; align-items: center; }
-.nav .side { width: 150px; padding: 0 6px; } .nav .side.r { text-align: right; }
-.nav .title { flex: 1; text-align: center; font-weight: 600; }
-.nb { background: none; border: 0; color: var(--tint); font-size: 17px; padding: 8px 10px; }
-.tabbar { bottom: 0; height: var(--tabh); border-top: .5px solid var(--hair); display: flex; padding-bottom: 0; }
-@supports (padding-bottom: env(safe-area-inset-bottom)) { .tabbar { padding-bottom: env(safe-area-inset-bottom); } }
-.tab { flex: 1; background: none; border: 0; color: var(--inact); font-size: 10px; padding: 4px 0 0; display: flex; flex-direction: column; align-items: center; }
-.tab svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; margin-bottom: 1px; }
-.tab.on { color: var(--tint); }
-
-/* Pages */
-.page { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding-top: var(--navh); padding-bottom: var(--tabh); overflow-y: auto; -webkit-overflow-scrolling: touch; display: none; }
-.page.on { display: block; }
-.wrap { max-width: 860px; margin: 0 auto; padding: 14px 0 30px; }
-.group { margin: 18px 20px; background: #fff; border: .5px solid #c8c7cc; border-radius: 7px; overflow: hidden; }
-.row { min-height: 44px; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; position: relative; }
-.row + .row::before { content: ""; position: absolute; top: 0; left: 15px; right: 0; height: .5px; background: #c8c7cc; }
-.muted { color: #8e8e93; }
-.segw { text-align: center; margin: 6px 0 10px; }
-.seg { display: inline-flex; border: 1px solid var(--tint); border-radius: 5px; overflow: hidden; }
-.seg button { border: 0; border-left: 1px solid var(--tint); background: none; color: var(--tint); font-size: 13px; padding: 6px 20px; }
-.seg button:first-child { border-left: 0; }
-.seg button.on { background: var(--tint); color: #fff; }
-.sub { display: none; } .sub.on { display: block; }
-
-/* Sky gradients */
-.sky.night { background: linear-gradient(#0b1030, #2b2a6b 62%, #4a3a86); }
-.sky.day   { background: linear-gradient(#2f8cf0, #6cc4ff 75%, #a9dcff); }
-.sky.dusk  { background: linear-gradient(#35307a, #c35a8e 60%, #ffa45c); }
-.sky.grey  { background: linear-gradient(#5f6b7a, #8e9aa8 70%, #b7c0ca); }
-
-/* Clock */
-.hero { margin: 8px 20px 0; border-radius: 7px; color: #fff; text-align: center; padding: 22px 10px 18px; }
-.big { font-size: 118px; font-weight: 100; line-height: 1.05; letter-spacing: -2px; }
-.big small { font-size: 26px; font-weight: 300; letter-spacing: 0; margin-left: 6px; }
-.bigdate { font-size: 24px; font-weight: 300; margin-top: 4px; }
-.glance { font-size: 16px; margin-top: 10px; min-height: 40px; display: flex; align-items: center; justify-content: center; }
-.glance svg { width: 40px; height: 40px; margin-right: 8px; }
-.city .n { font-size: 17px; } .city .s { font-size: 13px; color: #8e8e93; }
-.city .t { font-size: 38px; font-weight: 200; }
-.city .t small { font-size: 15px; font-weight: 300; margin-left: 3px; }
-.swt { text-align: center; font-size: 92px; font-weight: 100; margin: 26px 0 12px; font-variant-numeric: tabular-nums; }
-.btns { display: flex; justify-content: center; margin: 12px 0 20px; }
-.rb { width: 78px; height: 78px; border-radius: 50%; border: 0; font-size: 17px; color: #fff; margin: 0 28px; box-shadow: inset 0 0 0 3px rgba(255,255,255,.55); }
-.rb.gr { background: #c7c7cc; color: #000; } .rb.gn { background: #4cd964; } .rb.rd { background: #ff3b30; }
-.chips { text-align: center; margin-bottom: 8px; }
-.chip { border: 1px solid var(--tint); color: var(--tint); background: none; border-radius: 16px; font-size: 15px; padding: 6px 16px; margin: 4px; }
-.chip.on { background: var(--tint); color: #fff; }
-.flash { animation: fl 1s steps(2) infinite; color: #ff3b30; }
-@keyframes fl { 50% { opacity: .2; } }
-
-/* Weather */
-.wxhead { text-align: center; color: #fff; padding: 14px 0 6px; }
-.wxloc { font-size: 32px; font-weight: 300; } .wxcond { font-size: 18px; margin-top: 4px; }
-.wxtemp { font-size: 112px; font-weight: 100; line-height: 1.1; margin-left: 20px; }
-.wxhl { font-size: 18px; }
-.glass { margin: 14px 20px; background: rgba(255,255,255,.16); border-radius: 7px; border: .5px solid rgba(255,255,255,.3); color: #fff; }
-.hours { display: flex; overflow-x: auto; padding: 10px 6px; -webkit-overflow-scrolling: touch; }
-.hr { flex: 0 0 66px; text-align: center; font-size: 15px; }
-.hr svg { width: 36px; height: 36px; display: block; margin: 4px auto; }
-.hr em { display: block; font-style: normal; font-size: 11px; color: #bfeaff; height: 14px; }
-.days { padding: 4px 14px; }
-.day { display: grid; grid-template-columns: 60px 44px 40px 1fr 40px; align-items: center; height: 46px; font-size: 18px; border-top: .5px solid rgba(255,255,255,.3); }
-.day:first-child { border-top: 0; }
-.day svg { width: 34px; height: 34px; } .day .lo { text-align: right; opacity: .7; } .day .hi { text-align: right; }
-.bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,.28); position: relative; margin: 0 12px; }
-.bar i { position: absolute; top: 0; bottom: 0; border-radius: 2px; background: linear-gradient(90deg, #7fdcff, #ffc857); }
-.tiles { display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px; margin: 14px 20px; }
-.tile { background: rgba(255,255,255,.16); border: .5px solid rgba(255,255,255,.3); border-radius: 7px; color: #fff; padding: 10px 14px; }
-.tile div:first-child { font-size: 12px; opacity: .8; } .tile div:last-child { font-size: 26px; font-weight: 200; margin-top: 2px; }
-.upd { text-align: center; color: rgba(255,255,255,.75); font-size: 12px; }
-.err { text-align: center; color: #fff; margin-top: 80px; font-size: 18px; }
-
-/* Calendar */
-.cols { display: flex; align-items: flex-start; }
-.colA { flex: 1.3; padding: 6px 20px; } .colB { flex: 1; padding-right: 0; }
-@media (orientation: portrait) { .cols { flex-direction: column; } .colA, .colB { width: 100%; flex: none; } }
-.mh { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.mh .mt { font-size: 22px; font-weight: 300; color: #ff3b30; }
-.mh button { background: none; border: 0; color: var(--tint); font-size: 34px; line-height: 1; padding: 0 12px; }
-.mg { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; background: #fff; border: .5px solid #c8c7cc; border-radius: 7px; padding: 8px 4px; }
-.mg b { font-weight: 500; font-size: 12px; color: #8e8e93; padding: 4px 0; }
-.cd { height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 20px; font-weight: 300; }
-.cd span { width: 34px; height: 34px; line-height: 34px; border-radius: 50%; }
-.cd.today span { background: #ff3b30; color: #fff; font-weight: 500; }
-.cd.sel span { background: #000; color: #fff; }
-.cd i { width: 5px; height: 5px; border-radius: 50%; background: #8e8e93; margin-top: 1px; }
-.cd.e i { display: none; }
-.seld { font-size: 22px; font-weight: 300; margin: 6px 20px 0; }
-.ck { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid #c7c7cc; background: none; color: #fff; padding: 0; margin-right: 12px; flex: none; font-size: 14px; }
-.ck.on { background: var(--tint); border-color: var(--tint); }
-.rt { flex: 1; } .rt.done { color: #8e8e93; text-decoration: line-through; }
-.x { background: none; border: 0; color: #ff3b30; font-size: 22px; padding: 6px; }
-.add { display: flex; margin: 0 20px; }
-.add input { flex: 1; font-size: 17px; border: .5px solid #c8c7cc; border-radius: 7px; padding: 10px 12px; outline: 0; -webkit-user-select: text; user-select: text; }
-
-/* Apps */
-.wall { background: radial-gradient(60% 45% at 15% 12%, #ff7eb3, transparent 62%), radial-gradient(55% 50% at 88% 22%, #7a6cff, transparent 62%), radial-gradient(60% 55% at 70% 92%, #19c3d6, transparent 62%), radial-gradient(50% 45% at 8% 88%, #ffb35c, transparent 60%), #5b4bb5; }
-.spot { margin: 18px auto 6px; width: 320px; max-width: 80%; }
-.spot input { width: 100%; height: 32px; border-radius: 8px; border: 0; background: rgba(255,255,255,.3); color: #fff; font-size: 15px; text-align: center; outline: 0; -webkit-user-select: text; user-select: text; }
-.spot input::placeholder { color: rgba(255,255,255,.85); }
-.agrid { display: grid; grid-template-columns: repeat(auto-fill, 120px); justify-content: center; grid-gap: 30px 14px; padding: 24px 20px; }
-.app { text-align: center; color: #fff; text-decoration: none; font-size: 12px; text-shadow: 0 1px 2px rgba(0,0,0,.4); }
-.app .ic { width: 76px; height: 76px; border-radius: 17px; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,.2); }
-.app:active .ic { opacity: .6; }
-.app svg { width: 46px; height: 46px; fill: #fff; }
-
-/* Notes */
-.nsplit { display: flex; height: 100%; }
-.nlist { width: 270px; flex: none; background: #fff; border-right: .5px solid #c8c7cc; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-.ni { padding: 10px 14px; border-bottom: .5px solid #c8c7cc; } .ni.on { background: #e9e9ee; }
-.ni b { display: block; font-weight: 600; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ni span { font-size: 13px; color: #8e8e93; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
-.npaper { flex: 1; display: flex; flex-direction: column; background: #fffdf2; }
-.ndate { text-align: center; font-size: 12px; color: #b59a3a; padding: 10px 0 0; }
-.npaper textarea { flex: 1; border: 0; outline: 0; resize: none; background: transparent -webkit-linear-gradient(transparent 31px, #eadfb0 31px) 0 0 / 100% 32px; background: transparent linear-gradient(transparent 31px, #eadfb0 31px) 0 0 / 100% 32px; line-height: 32px; font-size: 19px; padding: 6px 24px; font-family: "Marker Felt", "Noteworthy", "Helvetica Neue", sans-serif; -webkit-user-select: text; user-select: text; }
-</style>
-</head>
-<body>
-<div id="app">
-  <div class="nav"><div class="side" id="navL"></div><div class="title" id="navT"></div><div class="side r" id="navR"></div></div>
-
-  <section class="page" id="p-clock"><div class="wrap">
-    <div class="segw"><div class="seg" id="seg"><button class="on" data-v="cw">World Clock</button><button data-v="cs">Stopwatch</button><button data-v="ct">Timer</button></div></div>
-    <div class="sub on" id="cw">
-      <div class="hero sky day" id="hero"><div class="big" id="bigtime"></div><div class="bigdate" id="bigdate"></div><div class="glance" id="glance"></div></div>
-      <div class="group" id="cities"></div>
-    </div>
-    <div class="sub" id="cs">
-      <div class="swt" id="swt">00:00.00</div>
-      <div class="btns"><button class="rb gr" id="swL">Lap</button><button class="rb gn" id="swS">Start</button></div>
-      <div class="group" id="laps" style="display:none"></div>
-    </div>
-    <div class="sub" id="ct">
-      <div class="swt" id="tmt">5:00</div>
-      <div class="chips" id="chips"></div>
-      <div class="btns"><button class="rb gr" id="tmC">Cancel</button><button class="rb gn" id="tmS">Start</button></div>
-    </div>
-  </div></section>
-
-  <section class="page sky day" id="p-weather"><div class="wrap" id="wxBody"><div class="err">Loading weather…</div></div></section>
-
-  <section class="page" id="p-cal"><div class="wrap cols">
-    <div class="colA"><div class="mh"><button id="mp">‹</button><div class="mt" id="mt"></div><button id="mn">›</button></div><div class="mg" id="mg"></div></div>
-    <div class="colB"><div class="seld" id="seld"></div><div class="group" id="rem"></div>
-      <div class="add"><input id="radd" placeholder="Add reminder" autocomplete="off"></div></div>
-  </div></section>
-
-  <section class="page wall" id="p-apps"><div class="wrap">
-    <form class="spot" action="https://www.google.com/search" method="get" target="_blank"><input name="q" type="search" placeholder="Search" autocomplete="off"></form>
-    <div class="agrid" id="agrid"></div>
-  </div></section>
-
-  <section class="page" id="p-notes"><div class="nsplit">
-    <div class="nlist" id="nlist"></div>
-    <div class="npaper"><div class="ndate" id="ndate"></div><textarea id="ntxt" placeholder="Start typing…"></textarea></div>
-  </div></section>
-
-  <div class="tabbar" id="tabbar"></div>
-</div>
-
+*{box-sizing:border-box}
+body{margin:0;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;background:#efeff4;color:#000;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;overflow:hidden}
+#app{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column}
+#nav{height:44px;line-height:44px;text-align:center;font-size:17px;font-weight:600;background:#f7f7f7;border-bottom:1px solid #b2b2b2;position:relative}
+#st{position:absolute;right:14px;top:0;font-size:12px;font-weight:400;color:#8e8e93}
+#st i{display:inline-block;width:8px;height:8px;border-radius:4px;background:#8e8e93;margin-right:5px}
+#st i.ok{background:#4cd964}#st i.bad{background:#ff3b30}
+#main{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:14px 16px}
+#cols{display:flex}#cols>div{flex:1;padding:0 8px}#colA{flex:1.15!important}
+.p{margin-bottom:16px}
+.p h2{font-size:13px;font-weight:400;color:#6d6d72;text-transform:uppercase;margin:0 0 6px 14px}
+.card{background:#fff;border-top:1px solid #c8c7cc;border-bottom:1px solid #c8c7cc;padding:0}
+.row{display:flex;align-items:center;min-height:56px;padding:6px 16px;border-bottom:1px solid #c8c7cc;font-size:19px}
+.row:last-child{border-bottom:0}.row .g{flex:1}.row small{display:block;font-size:13px;color:#8e8e93}
+.pad{padding:14px 16px}
+.time{font-size:150px;line-height:150px;font-weight:100;letter-spacing:-4px;text-align:center}
+.time span{font-size:40px;letter-spacing:0;font-weight:300;margin-left:8px}
+.date{text-align:center;font-size:28px;font-weight:300;color:#6d6d72;margin-top:6px}
+.temp{font-size:72px;font-weight:200}.sub{color:#8e8e93;font-size:15px}
+.fc{display:flex;border-top:1px solid #c8c7cc;margin-top:10px;padding-top:10px}.fc div{flex:1;text-align:center;font-size:14px}
+.sw{width:51px;height:31px;border-radius:16px;background:#fff;border:2px solid #e5e5e5;position:relative;flex:none;transition:background .2s,border-color .2s}
+.sw i{position:absolute;left:0;top:0;width:27px;height:27px;border-radius:14px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.35);transition:left .2s}
+.sw.on{background:#4cd964;border-color:#4cd964}.sw.on i{left:20px}
+input[type=range]{-webkit-appearance:none;width:100%;height:30px;background:transparent;margin:0}
+input[type=range]::-webkit-slider-runnable-track{height:2px;background:#b7b7b7}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:15px;background:#fff;margin-top:-14px;box-shadow:0 2px 4px rgba(0,0,0,.4)}
+.sl{padding:0 16px 12px;border-bottom:1px solid #c8c7cc}
+.dots span{display:inline-block;width:32px;height:32px;border-radius:16px;margin:2px 10px 2px 0;border:1px solid #c8c7cc}
+.badge{font-size:11px;padding:2px 6px;border-radius:4px;color:#fff;background:#ff9500;margin-left:8px;vertical-align:middle}.badge.live{background:#4cd964}
+.btn{color:#007aff;font-size:17px;padding:8px 0}
+table{width:100%;border-collapse:collapse;text-align:center;font-size:16px}th{font-weight:400;color:#8e8e93;font-size:12px;padding:4px}
+td{height:34px}td b{display:inline-block;width:30px;height:30px;line-height:30px;border-radius:15px;font-weight:400}
+td b.t{background:#007aff;color:#fff}td u{display:block;width:4px;height:4px;border-radius:2px;background:#8e8e93;margin:-5px auto 0}
+.ev{display:flex;padding:8px 16px;border-bottom:1px solid #c8c7cc;font-size:17px}.ev:last-child{border:0}.ev em{width:100px;font-style:normal;color:#007aff}
+.seg{display:inline-flex;border:1px solid #007aff;border-radius:4px;overflow:hidden}.seg span{padding:6px 12px;font-size:15px;color:#007aff;border-left:1px solid #007aff}.seg span:first-child{border:0}.seg span.on{background:#007aff;color:#fff}
+input[type=text],textarea{font:inherit;font-size:17px;border:0;text-align:right;width:60%;background:transparent;color:#8e8e93;-webkit-user-select:text}
+textarea{width:100%;height:120px;font:13px monospace;text-align:left;border-top:1px solid #c8c7cc;padding:8px 16px}
+#tabs{height:56px;display:flex;background:#f7f7f7;border-top:1px solid #b2b2b2}
+.tab{flex:1;text-align:center;color:#8e8e93;font-size:10px;padding-top:6px}.tab.on{color:#007aff}
+.tab svg{display:block;margin:0 auto 2px;width:28px;height:28px;stroke:currentColor;fill:none;stroke-width:1.5}
+.p-wx,#p-set,#p-clock{}
+#p-set{display:none}
+#main[data-t=wx] .p,#main[data-t=cal] .p,#main[data-t=acc] .p,#main[data-t=set] .p{display:none}
+#main[data-t=wx] #p-wx,#main[data-t=cal] #p-cal,#main[data-t=acc] #p-acc,#main[data-t=set] #p-set{display:block}
+#main:not([data-t=home]) #cols{display:block}
+body.night{background:#000;color:#8a8a8f}body.night #nav,body.night #tabs{background:#0b0b0b;border-color:#222}
+body.night .card{background:#0d0d0d;border-color:#222}body.night .row,body.night .ev,body.night .sl{border-color:#222}
+@media (orientation:portrait){#cols{display:block}.time{font-size:110px;line-height:110px}}
+</style></head><body>
+<div id="app"><div id="nav"><span id="ttl">Home</span><div id="st"></div></div>
+<div id="main" data-t="home"><div id="cols">
+<div id="colA"><div class="p" id="p-clock"><div class="time" id="clk"></div><div class="date" id="dt"></div></div>
+<div class="p" id="p-acc"></div><div id="p-set"></div></div>
+<div id="colB"><div class="p" id="p-wx"></div><div class="p" id="p-cal"></div></div></div></div>
+<div id="tabs"></div></div>
 <script>
-/* ===== Settings: edit these ===== */
-var CFG = { lat: 39.8915, lon: -75.0374, name: 'Haddonfield, NJ', units: 'F' };    // units: 'F' or 'C'
-var CITIES = [['Los Angeles', 'America/Los_Angeles'], ['London', 'Europe/London'], ['Paris', 'Europe/Paris'], ['Dubai', 'Asia/Dubai'], ['Tokyo', 'Asia/Tokyo'], ['Sydney', 'Australia/Sydney']];
-var APPS = [  // [label, url, gradient from, gradient to, glyph]
-  ['Mail', 'https://mail.google.com', '#59c9ff', '#1b7df2', 'mail'],
-  ['Safari', 'https://www.google.com', '#55d1ff', '#1b86ef', 'safari'],
-  ['Maps', 'https://maps.google.com', '#5ed36a', '#2aa6e8', 'maps'],
-  ['Photos', 'https://photos.google.com', '#ffcf3a', '#ff5a7a', 'photo'],
-  ['YouTube', 'https://www.youtube.com', '#ff5a5a', '#d4151b', 'play'],
-  ['News', 'https://news.google.com', '#ff6b6b', '#d62f4b', 'news'],
-  ['Music', 'https://music.youtube.com', '#ff7bb0', '#f0316b', 'music'],
-  ['Weather', 'https://weather.com', '#3ab5ff', '#2b6fe0', 'sun'],
-  ['Notes', 'https://keep.google.com', '#ffe15a', '#f5b800', 'note'],
-  ['Wikipedia', 'https://www.wikipedia.org', '#9aa4b2', '#5d6877', 'book']
-];
-
-var $ = function (id) { return document.getElementById(id); };
-function rd(k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
-function wr(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
-function pad(n) { return n < 10 ? '0' + n : '' + n; }
-function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
-var saved = rd('dash-cfg', null); if (saved) { CFG.lat = saved.lat; CFG.lon = saved.lon; CFG.name = saved.name; CFG.units = saved.units; }
-
-/* ===== Glyphs & weather icons ===== */
-var GL = {
-  mail: 'M3 6.5A1.5 1.5 0 0 1 4.5 5h15A1.5 1.5 0 0 1 21 6.5v.4l-9 6.1-9-6.1zM3 9.3l9 6.1 9-6.1v8.2a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z',
-  safari: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm4.6 5.4-2.3 6.9-6.9 2.3 2.3-6.9z',
-  maps: 'M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z',
-  play: 'M8 5.5v13a1 1 0 0 0 1.5.9l10.5-6.5a1 1 0 0 0 0-1.8L9.5 4.6A1 1 0 0 0 8 5.5z',
-  photo: 'M12 2a3 4.5 0 0 1 0 9 3 4.5 0 0 1 0-9zm0 11a3 4.5 0 0 1 0 9 3 4.5 0 0 1 0-9zM2 12a4.5 3 0 0 1 9 0 4.5 3 0 0 1-9 0zm11 0a4.5 3 0 0 1 9 0 4.5 3 0 0 1-9 0z',
-  sun: 'M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM11 1h2v3h-2zM11 20h2v3h-2zM1 11h3v2H1zM20 11h3v2h-3z',
-  news: 'M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1zm2 3v3h10V7zm0 5v1.5h10V12zm0 3v1.5h6V15z',
-  note: 'M6 3h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm2 4v1.5h8V7zm0 4v1.5h8V11zm0 4v1.5h5V15z',
-  book: 'M4 5.5C6.5 4.5 9.5 4.5 12 6c2.5-1.5 5.5-1.5 8-.5v13c-2.5-1-5.5-1-8 .5-2.5-1.5-5.5-1.5-8-.5z',
-  music: 'M9 4.5 19 3v12.5a3 3 0 1 1-2-2.8V7L11 7.9v9.6a3 3 0 1 1-2-2.8z'
-};
-var TABS = [
-  ['clock', 'Clock', '<circle cx="14" cy="14" r="10"/><path d="M14 8v6l4 3"/>'],
-  ['weather', 'Weather', '<path d="M8 21a5 5 0 0 1-.5-10A7 7 0 0 1 21 12a4.5 4.5 0 0 1 0 9z"/>'],
-  ['cal', 'Calendar', '<rect x="4" y="5" width="20" height="19" rx="2"/><path d="M4 11h20M9 3v4M19 3v4"/>'],
-  ['apps', 'Apps', '<rect x="4" y="4" width="8" height="8" rx="2"/><rect x="16" y="4" width="8" height="8" rx="2"/><rect x="4" y="16" width="8" height="8" rx="2"/><rect x="16" y="16" width="8" height="8" rx="2"/>'],
-  ['notes', 'Notes', '<path d="M7 4h14v20H7zM11 10h6M11 14h6M11 18h4"/>']
-];
-function rays() { var s = ''; for (var i = 0; i < 8; i++) { var a = i * Math.PI / 4, c = Math.cos(a), n = Math.sin(a); s += '<line x1="' + (32 + c * 16) + '" y1="' + (32 + n * 16) + '" x2="' + (32 + c * 22) + '" y2="' + (32 + n * 22) + '"/>'; } return s; }
-var SUN = '<circle cx="32" cy="32" r="11" fill="#ffd43b"/><g stroke="#ffd43b" stroke-width="3" stroke-linecap="round">' + rays() + '</g>';
-var MOON = '<path d="M38 12a19 19 0 1 0 14 32A16 16 0 0 1 38 12z" fill="#f5f1c8"/>';
-var CLOUD = '<g fill="#fff"><circle cx="23" cy="38" r="9"/><circle cx="35" cy="31" r="12"/><circle cx="47" cy="38" r="8"/><rect x="23" y="38" width="24" height="9" rx="4"/></g>';
-function kind(c) {
-  if (c === 0) return 'clear'; if (c <= 2) return 'partly'; if (c === 3) return 'cloud';
-  if (c === 45 || c === 48) return 'fog';
-  if ((c >= 51 && c <= 67) || (c >= 80 && c <= 82)) return 'rain';
-  if ((c >= 71 && c <= 77) || c === 85 || c === 86) return 'snow';
-  if (c >= 95) return 'storm'; return 'cloud';
-}
-var TEXT = { clear: 'Clear', partly: 'Partly Cloudy', cloud: 'Cloudy', fog: 'Foggy', rain: 'Rain', snow: 'Snow', storm: 'Thunderstorms' };
-function label(c) { if (c === 1) return 'Mostly Clear'; if (c >= 51 && c <= 57) return 'Drizzle'; return TEXT[kind(c)]; }
-function icon(c, day) {
-  var k = kind(c), b = day ? SUN : MOON, g;
-  if (k === 'clear') g = b;
-  else if (k === 'partly') g = '<g transform="translate(-8 -9) scale(.8)">' + b + '</g>' + CLOUD;
-  else if (k === 'cloud') g = '<g opacity=".8" transform="translate(-4 -6)">' + CLOUD + '</g>' + CLOUD;
-  else {
-    g = '<g transform="translate(0 -6)">' + CLOUD + '</g>';
-    if (k === 'rain') g += '<g stroke="#8fd3ff" stroke-width="3" stroke-linecap="round"><path d="M25 47l-2 8M35 47l-2 8M45 47l-2 8"/></g>';
-    if (k === 'snow') g += '<g fill="#fff"><circle cx="25" cy="50" r="2.4"/><circle cx="35" cy="54" r="2.4"/><circle cx="45" cy="50" r="2.4"/></g>';
-    if (k === 'storm') g += '<polygon points="35,40 28,52 33,52 30,62 41,48 36,48 39,40" fill="#ffd43b"/>';
-    if (k === 'fog') g += '<g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M18 48h28M22 55h24"/></g>';
-  }
-  return '<svg viewBox="0 0 64 64">' + g + '</svg>';
-}
-function h12(d) { var h = d.getHours(); return (h % 12 || 12) + ' ' + (h < 12 ? 'AM' : 'PM'); }
-function hm(s) { var d = new Date(s); return (d.getHours() % 12 || 12) + ':' + pad(d.getMinutes()) + (d.getHours() < 12 ? ' AM' : ' PM'); }
-function deg(v) { return Math.round(v); }
-
-/* ===== Tabs & navigation bar ===== */
-var NAV = {
-  clock: { t: 'Clock' },
-  weather: { t: 'Weather', dark: 1 },
-  cal: { t: 'Calendar' },
-  apps: { t: 'Apps', dark: 1 },
-  notes: { t: 'Notes' }
-};
-var cur = rd('dash-tab', 'clock');
-function nbtn(txt, fn) { var b = document.createElement('button'); b.className = 'nb'; b.textContent = txt; b.onclick = fn; return b; }
-function setNav() {
-  var L = $('navL'), R = $('navR'); L.innerHTML = ''; R.innerHTML = '';
-  $('navT').textContent = NAV[cur].t;
-  if (cur === 'weather') { L.appendChild(nbtn('Locate', useDevice)); R.appendChild(nbtn('°' + CFG.units, toggleUnits)); }
-  if (cur === 'cal') { L.appendChild(nbtn('Today', goToday)); R.appendChild(nbtn('Add', function () { $('radd').focus(); })); }
-  if (cur === 'notes') { L.appendChild(nbtn('Delete', delNote)); R.appendChild(nbtn('New', newNote)); }
-}
-function show(id) {
-  cur = id; wr('dash-tab', id);
-  TABS.forEach(function (t) { $('p-' + t[0]).classList.toggle('on', t[0] === id); $('t-' + t[0]).classList.toggle('on', t[0] === id); });
-  $('app').className = NAV[id].dark ? 'dark' : '';
-  setNav();
-}
-TABS.forEach(function (t) {
-  var b = document.createElement('button'); b.className = 'tab'; b.id = 't-' + t[0];
-  b.innerHTML = '<svg viewBox="0 0 28 28">' + t[2] + '</svg>' + t[1];
-  b.onclick = function () { show(t[0]); };
-  $('tabbar').appendChild(b);
-});
-
-/* ===== Clock tab ===== */
-var lastT = '', lastD = '';
-function parts(tz) {
-  var o = tz ? { timeZone: tz } : {}, n = new Date();
-  var t = n.toLocaleTimeString('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false }).split(':');
-  var d = +n.toLocaleDateString('en-US', { timeZone: tz, day: 'numeric' });
-  return { h: +t[0] % 24, m: +t[1], d: d };
-}
-function drawCities() {
-  var me = parts(), n = new Date(), html = '';
-  CITIES.forEach(function (c) {
-    var p = parts(c[1]), dd = p.d - me.d; if (dd > 15) dd -= 30; if (dd < -15) dd += 30;
-    var tot = dd * 1440 + (p.h * 60 + p.m) - (me.h * 60 + me.m), hrs = tot / 60;
-    var day = dd === 0 ? 'Today' : dd > 0 ? 'Tomorrow' : 'Yesterday';
-    var tm = n.toLocaleTimeString('en-US', { timeZone: c[1], hour: 'numeric', minute: '2-digit' }).split(' ');
-    html += '<div class="row city"><div><div class="n">' + c[0] + '</div><div class="s">' + day + ', ' + (hrs >= 0 ? '+' : '') + hrs + 'HRS</div></div><div class="t">' + tm[0] + '<small>' + tm[1] + '</small></div></div>';
-  });
-  $('cities').innerHTML = html;
-}
-$('seg').onclick = function (e) {
-  var v = e.target.getAttribute('data-v'); if (!v) return;
-  var bs = $('seg').children; for (var i = 0; i < bs.length; i++) bs[i].classList.toggle('on', bs[i] === e.target);
-  ['cw', 'cs', 'ct'].forEach(function (id) { $(id).classList.toggle('on', id === v); });
-};
-
-/* Stopwatch */
-var sw = { run: false, t0: 0, acc: 0, laps: [], last: 0 };
-function swMs() { return sw.acc + (sw.run ? Date.now() - sw.t0 : 0); }
-function fmt(ms) { var c = Math.floor(ms / 10) % 100, s = Math.floor(ms / 1000) % 60, m = Math.floor(ms / 60000); return pad(m) + ':' + pad(s) + '.' + pad(c); }
-function swBtns() {
-  $('swS').textContent = sw.run ? 'Stop' : 'Start'; $('swS').className = 'rb ' + (sw.run ? 'rd' : 'gn');
-  $('swL').textContent = (!sw.run && sw.acc > 0) ? 'Reset' : 'Lap';
-}
-$('swS').onclick = function () { if (sw.run) { sw.acc = swMs(); sw.run = false; } else { sw.t0 = Date.now(); sw.run = true; } swBtns(); };
-$('swL').onclick = function () {
-  if (sw.run) { var t = swMs(); sw.laps.unshift({ n: sw.laps.length + 1, d: t - sw.last }); sw.last = t; }
-  else { sw = { run: false, t0: 0, acc: 0, laps: [], last: 0 }; $('swt').textContent = '00:00.00'; }
-  swBtns(); var h = ''; sw.laps.forEach(function (l) { h += '<div class="row"><span>Lap ' + l.n + '</span><span>' + fmt(l.d) + '</span></div>'; });
-  $('laps').innerHTML = h; $('laps').style.display = sw.laps.length ? 'block' : 'none';
-};
-
-/* Timer */
-var tm = { dur: 300000, left: 300000, run: false, end: 0, done: false }, AC = null, alarmIv = null;
-function fmtT(ms) { var s = Math.ceil(ms / 1000), h = Math.floor(s / 3600), m = Math.floor(s / 60) % 60; s = s % 60; return (h ? h + ':' + pad(m) : m) + ':' + pad(s); }
-function beep() { if (!AC) return; var o = AC.createOscillator(), g = AC.createGain(); o.frequency.value = 880; g.gain.value = .2; o.connect(g); g.connect(AC.destination); o.start(); o.stop(AC.currentTime + .25); }
-function stopAlarm() { clearInterval(alarmIv); alarmIv = null; }
-function tmBtns() { $('tmS').textContent = tm.run ? 'Pause' : (tm.left < tm.dur && !tm.done ? 'Resume' : 'Start'); $('tmS').className = 'rb ' + (tm.run ? 'rd' : 'gn'); }
-[1, 5, 10, 15, 30, 60].forEach(function (m) {
-  var b = document.createElement('button'); b.className = 'chip' + (m === 5 ? ' on' : ''); b.textContent = m + ' min';
-  b.onclick = function () {
-    if (tm.run) return; tm.dur = tm.left = m * 60000; tm.done = false; stopAlarm(); tmBtns();
-    var cs = $('chips').children; for (var i = 0; i < cs.length; i++) cs[i].classList.toggle('on', cs[i] === b);
-  };
-  $('chips').appendChild(b);
-});
-$('tmS').onclick = function () {
-  try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
-  if (tm.done) return;
-  if (tm.run) { tm.left = tm.end - Date.now(); tm.run = false; } else { tm.end = Date.now() + tm.left; tm.run = true; }
-  tmBtns();
-};
-$('tmC').onclick = function () { tm.run = false; tm.done = false; tm.left = tm.dur; stopAlarm(); $('tmt').className = 'swt'; tmBtns(); };
-
-/* ===== Weather tab ===== */
-var W = null;
-function tile(a, b) { return '<div class="tile"><div>' + a + '</div><div>' + b + '</div></div>'; }
-function load() {
-  var c = CFG.units === 'C';
-  var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + CFG.lat + '&longitude=' + CFG.lon +
-    '&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m,is_day' +
-    '&hourly=temperature_2m,weather_code,precipitation_probability,is_day' +
-    '&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,uv_index_max,precipitation_probability_max' +
-    '&temperature_unit=' + (c ? 'celsius' : 'fahrenheit') + '&wind_speed_unit=' + (c ? 'kmh' : 'mph') + '&timezone=auto&forecast_days=6';
-  fetch(url).then(function (r) { return r.json(); }).then(function (d) {
-    if (!d.current) throw 1; W = d; renderWx(); setPhase();
-  }).catch(function () { if (!W) $('wxBody').innerHTML = '<div class="err">Weather unavailable.<br>Check your connection. Retrying soon.</div>'; });
-}
-function renderWx() {
-  var c = W.current, D = W.daily, H = W.hourly, s = H.time.indexOf(c.time.slice(0, 13) + ':00'); if (s < 0) s = 0;
-  var hours = '', days = '', i;
-  for (i = s; i < s + 14 && i < H.time.length; i++) {
-    var p = H.precipitation_probability[i];
-    hours += '<div class="hr"><div>' + (i === s ? 'Now' : h12(new Date(H.time[i]))) + '</div>' + icon(H.weather_code[i], H.is_day[i]) + '<em>' + (p >= 20 ? p + '%' : '') + '</em><div>' + deg(H.temperature_2m[i]) + '°</div></div>';
-  }
-  var mn = Math.min.apply(null, D.temperature_2m_min), mx = Math.max.apply(null, D.temperature_2m_max), sp = Math.max(1, mx - mn);
-  for (i = 0; i < D.time.length; i++) {
-    var lo = D.temperature_2m_min[i], hi = D.temperature_2m_max[i];
-    days += '<div class="day"><span>' + (i === 0 ? 'Today' : new Date(D.time[i] + 'T12:00').toLocaleDateString('en-US', { weekday: 'short' })) + '</span>' + icon(D.weather_code[i], true) +
-      '<span class="lo">' + deg(lo) + '°</span><div class="bar"><i style="left:' + ((lo - mn) / sp * 100) + '%;right:' + ((mx - hi) / sp * 100) + '%"></i></div><span class="hi">' + deg(hi) + '°</span></div>';
-  }
-  var u = CFG.units === 'C' ? 'km/h' : 'mph';
-  $('wxBody').innerHTML = '<div class="wxhead"><div class="wxloc">' + esc(CFG.name) + '</div><div class="wxcond">' + label(c.weather_code) + '</div><div class="wxtemp">' + deg(c.temperature_2m) + '°</div>' +
-    '<div class="wxhl">H ' + deg(D.temperature_2m_max[0]) + '°&nbsp;&nbsp;L ' + deg(D.temperature_2m_min[0]) + '°</div></div>' +
-    '<div class="glass"><div class="hours">' + hours + '</div></div><div class="glass days">' + days + '</div><div class="tiles">' +
-    tile('Feels like', deg(c.apparent_temperature) + '°') + tile('Humidity', c.relative_humidity_2m + '%') + tile('Wind', deg(c.wind_speed_10m) + ' ' + u) +
-    tile('Rain chance', D.precipitation_probability_max[0] + '%') + tile('UV index', Math.round(D.uv_index_max[0])) + tile('Sunrise / Sunset', hm(D.sunrise[0]).replace(' AM', '') + ' / ' + hm(D.sunset[0]).replace(' PM', '')) +
-    '</div><div class="upd">Updated ' + hm(new Date()) + '</div>';
-  $('glance').innerHTML = icon(c.weather_code, c.is_day) + deg(c.temperature_2m) + '° ' + label(c.weather_code) + ' · H ' + deg(D.temperature_2m_max[0]) + '° L ' + deg(D.temperature_2m_min[0]) + '°';
-}
-function toggleUnits() { CFG.units = CFG.units === 'F' ? 'C' : 'F'; wr('dash-cfg', CFG); setNav(); load(); }
-function useDevice() {
-  if (!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(function (p) {
-    CFG.lat = +p.coords.latitude.toFixed(4); CFG.lon = +p.coords.longitude.toFixed(4); CFG.name = 'Current Location'; wr('dash-cfg', CFG); load();
-  });
-}
-function setPhase() {
-  var now = new Date(), p = 'day';
-  if (W) {
-    var rise = new Date(W.daily.sunrise[0]), set = new Date(W.daily.sunset[0]), m = 45 * 60000;
-    if (Math.abs(now - rise) < m || Math.abs(now - set) < m) p = 'dusk';
-    else if (now < rise || now > set) p = 'night';
-    else if (['cloud', 'fog', 'rain', 'snow', 'storm'].indexOf(kind(W.current.weather_code)) > -1) p = 'grey';
-  } else { var h = now.getHours(); p = (h < 6 || h >= 19) ? 'night' : 'day'; }
-  ['hero', 'p-weather'].forEach(function (id) { var e = $(id); e.className = e.className.replace(/ ?(night|day|dusk|grey)\b/, '') + ' ' + p; });
-}
-
-/* ===== Calendar tab ===== */
-var today = new Date(), view = new Date(today.getFullYear(), today.getMonth(), 1), sel = key(today), REM = rd('dash-rem', {});
-function key(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
-function drawCal() {
-  var y = view.getFullYear(), m = view.getMonth(), first = new Date(y, m, 1).getDay(), cnt = new Date(y, m + 1, 0).getDate(), tk = key(new Date());
-  $('mt').textContent = view.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  var h = 'SMTWTFS'.split('').map(function (x) { return '<b>' + x + '</b>'; }).join(''), i;
-  for (i = 0; i < first; i++) h += '<div></div>';
-  for (i = 1; i <= cnt; i++) {
-    var k = y + '-' + pad(m + 1) + '-' + pad(i), has = REM[k] && REM[k].length;
-    h += '<div class="cd' + (k === tk ? ' today' : '') + (k === sel ? ' sel' : '') + (has ? '' : ' e') + '" data-k="' + k + '"><span>' + i + '</span><i></i></div>';
-  }
-  $('mg').innerHTML = h; drawRem();
-}
-function drawRem() {
-  var p = sel.split('-'), d = new Date(+p[0], +p[1] - 1, +p[2]), list = REM[sel] || [], h = '';
-  $('seld').textContent = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-  list.forEach(function (r, i) {
-    h += '<div class="row"><button class="ck' + (r.d ? ' on' : '') + '" data-i="' + i + '">' + (r.d ? '✓' : '') + '</button><div class="rt' + (r.d ? ' done' : '') + '">' + esc(r.t) + '</div><button class="x" data-x="' + i + '">×</button></div>';
-  });
-  $('rem').innerHTML = h || '<div class="row muted">No reminders</div>';
-}
-$('mg').onclick = function (e) { var n = e.target; while (n && n !== this && !n.getAttribute('data-k')) n = n.parentNode; if (n && n.getAttribute && n.getAttribute('data-k')) { sel = n.getAttribute('data-k'); drawCal(); } };
-$('rem').onclick = function (e) {
-  var i = e.target.getAttribute('data-i'), x = e.target.getAttribute('data-x');
-  if (i !== null) REM[sel][+i].d = !REM[sel][+i].d;
-  else if (x !== null) { REM[sel].splice(+x, 1); if (!REM[sel].length) delete REM[sel]; } else return;
-  wr('dash-rem', REM); drawCal();
-};
-$('radd').onkeydown = function (e) {
-  if (e.keyCode !== 13 || !this.value.replace(/\s/g, '')) return;
-  (REM[sel] = REM[sel] || []).push({ t: this.value, d: false }); this.value = ''; wr('dash-rem', REM); drawCal();
-};
-$('mp').onclick = function () { view = new Date(view.getFullYear(), view.getMonth() - 1, 1); drawCal(); };
-$('mn').onclick = function () { view = new Date(view.getFullYear(), view.getMonth() + 1, 1); drawCal(); };
-function goToday() { var n = new Date(); view = new Date(n.getFullYear(), n.getMonth(), 1); sel = key(n); drawCal(); }
-
-/* ===== Apps tab ===== */
-APPS.forEach(function (a) {
-  var e = document.createElement('a'); e.className = 'app'; e.href = a[1]; e.target = '_blank';
-  e.innerHTML = '<div class="ic" style="background:linear-gradient(' + a[2] + ',' + a[3] + ')"><svg viewBox="0 0 24 24"><path d="' + GL[a[4]] + '"/></svg></div>' + a[0];
-  $('agrid').appendChild(e);
-});
-
-/* ===== Notes tab ===== */
-var NOTES = rd('dash-notes', [{ t: 'Welcome\nTap New to start a note. Notes are saved on this iPad.', d: Date.now() }]), ni = 0;
-function drawNotes() {
-  var h = '';
-  NOTES.forEach(function (n, i) {
-    var l = n.t.split('\n'), title = l[0] || 'New Note', pre = l.slice(1).join(' ') || 'No additional text';
-    h += '<div class="ni' + (i === ni ? ' on' : '') + '" data-i="' + i + '"><b>' + esc(title) + '</b><span>' + esc(pre) + '</span></div>';
-  });
-  $('nlist').innerHTML = h;
-  var n = NOTES[ni]; $('ntxt').value = n ? n.t : ''; $('ntxt').disabled = !n;
-  $('ndate').textContent = n ? new Date(n.d).toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
-}
-function newNote() { NOTES.unshift({ t: '', d: Date.now() }); ni = 0; wr('dash-notes', NOTES); drawNotes(); $('ntxt').focus(); }
-function delNote() { if (!NOTES.length || !confirm('Delete this note?')) return; NOTES.splice(ni, 1); ni = 0; wr('dash-notes', NOTES); drawNotes(); }
-$('nlist').onclick = function (e) { var n = e.target; while (n && n !== this && n.getAttribute('data-i') === null) n = n.parentNode; if (n && n !== this) { ni = +n.getAttribute('data-i'); drawNotes(); } };
-$('ntxt').oninput = function () {
-  NOTES[ni].t = this.value; NOTES[ni].d = Date.now(); wr('dash-notes', NOTES);
-  var row = $('nlist').children[ni]; if (row) { var l = this.value.split('\n'); row.children[0].textContent = l[0] || 'New Note'; row.children[1].textContent = l.slice(1).join(' ') || 'No additional text'; }
-};
-
-/* ===== Main loop ===== */
-function frame() {
-  var n = new Date(), h = n.getHours(), m = n.getMinutes(), s = (h % 12 || 12) + ':' + pad(m);
-  if (s !== lastT) { lastT = s; $('bigtime').innerHTML = s + '<small>' + (h < 12 ? 'AM' : 'PM') + '</small>'; drawCities(); setPhase(); }
-  var dk = n.toDateString();
-  if (dk !== lastD) { lastD = dk; $('bigdate').textContent = n.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }); drawCal(); }
-  if (sw.run) $('swt').textContent = fmt(swMs());
-  if (tm.run) {
-    tm.left = tm.end - Date.now();
-    if (tm.left <= 0) { tm.left = 0; tm.run = false; tm.done = true; $('tmt').className = 'swt flash'; beep(); alarmIv = setInterval(beep, 1200); setTimeout(stopAlarm, 60000); tmBtns(); }
-  }
-  if (tm.run || tm.done || $('tmt').textContent !== fmtT(tm.left)) $('tmt').textContent = tm.done ? "Time's Up" : fmtT(tm.left);
-}
-
-/* Keep the screen awake */
-function wake() { try { if (navigator.wakeLock) navigator.wakeLock.request('screen').catch(function () {}); } catch (e) {} }
-document.addEventListener('visibilitychange', function () { if (!document.hidden) { wake(); load(); } });
-document.addEventListener('click', wake);
-
-show(cur); drawNotes(); frame(); setInterval(frame, 100); load(); setInterval(load, 15 * 60000); wake();
-</script>
-</body>
-</html>
+(function(){
+var K="ios7dash",DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],MON=["January","February","March","April","May","June","July","August","September","October","November","December"];
+var DD='[{"id":"light.bedside","name":"Bedside Lamp","room":"Bedroom","type":"dim"},{"id":"light.ceiling","name":"Ceiling Light","room":"Bedroom","type":"color"},{"id":"switch.fan","name":"Fan","room":"Bedroom","type":"switch"}]';
+var D={h24:false,sec:false,date:true,units:"f",loc:"Trenton",refresh:15,ics:"",days:7,mode:"demo",url:"",night:false,accent:"#007aff",devs:DD};
+var S={};function $(i){return document.getElementById(i)}
+var memOk=true;function load(){var o={};try{o=JSON.parse(localStorage.getItem(K)||"{}")}catch(e){memOk=false}for(var k in D)S[k]=o.hasOwnProperty(k)?o[k]:D[k]}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){memOk=false}}
+function xhr(m,u,b,cb){var r=new XMLHttpRequest(),d=false;function f(e,t){if(!d){d=true;cb(e,t)}}r.open(m,u,true);r.timeout=15000;if(b)r.setRequestHeader("Content-Type","application/json");
+r.onload=function(){f(r.status>=200&&r.status<300?null:"HTTP "+r.status,r.responseText)};r.onerror=r.ontimeout=function(){f("Network error",null)};try{r.send(b||null)}catch(e){f("Blocked",null)}}
+function p2(n){return n<10?"0"+n:""+n}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function fmtT(d){var h=d.getHours(),a=h>=12?"PM":"AM";if(S.h24)return p2(h)+":"+p2(d.getMinutes());h=h%12||12;return h+":"+p2(d.getMinutes())+" "+a}
+/* ---- clock ---- */
+function tick(){var d=new Date(),h=d.getHours(),t,ap="";if(S.h24)t=p2(h)+":"+p2(d.getMinutes());else{t=(h%12||12)+":"+p2(d.getMinutes());ap=h>=12?"PM":"AM"}
+if(S.sec)t+=":"+p2(d.getSeconds());$("clk").innerHTML=t+(ap?"<span>"+ap+"</span>":"");
+$("dt").innerHTML=S.date?DAYS[d.getDay()]+", "+MON[d.getMonth()]+" "+d.getDate():""}
+/* ---- weather ---- */
+var wx=null,wxBusy=false,wxFail=0,wxT,wxErr="";
+var WD={0:"Clear",1:"Mostly clear",2:"Partly cloudy",3:"Cloudy",45:"Fog",48:"Fog",51:"Drizzle",53:"Drizzle",55:"Drizzle",61:"Rain",63:"Rain",65:"Heavy rain",71:"Snow",73:"Snow",75:"Heavy snow",80:"Showers",81:"Showers",82:"Heavy showers",95:"Thunderstorm",96:"Thunderstorm",99:"Thunderstorm"};
+function ico(c,s){var C='<path d="M14 36a8 8 0 0 1-1-16 11 11 0 0 1 21 3 7 7 0 0 1 0 13z" fill="#c7cdd6"/>',SU='<circle cx="24" cy="24" r="9" fill="#ffcc00"/><path d="M24 5v6M24 37v6M5 24h6M37 24h6M11 11l4 4M33 33l4 4M37 11l-4 4M15 33l-4 4" stroke="#ffcc00" stroke-width="3" stroke-linecap="round"/>',b;
+if(c<=1)b=SU;else if(c==2)b='<circle cx="18" cy="17" r="8" fill="#ffcc00"/>'+C;else if(c==3||c==45||c==48)b=C;
+else if(c>=71&&c<=77||c==85||c==86)b=C+'<circle cx="18" cy="42" r="2" fill="#5ac8fa"/><circle cx="26" cy="44" r="2" fill="#5ac8fa"/><circle cx="34" cy="42" r="2" fill="#5ac8fa"/>';
+else if(c>=95)b=C+'<path d="M26 32l-6 9h5l-2 6 8-10h-5z" fill="#ffcc00"/>';else b=C+'<path d="M18 40l-2 5M26 40l-2 5M34 40l-2 5" stroke="#007aff" stroke-width="2.5" stroke-linecap="round"/>';
+return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 48 48">'+b+'</svg>'}
+function cv(t){return Math.round(t)+"\u00b0"}
+function loadWx(){if(wxBusy)return;wxBusy=true;clearTimeout(wxT);wxErr="";renderWx();
+var city=S.loc.split(",")[0];
+xhr("GET","https://geocoding-api.open-meteo.com/v1/search?count=1&name="+encodeURIComponent(city),null,function(e,t){
+if(e){return wxDone(e)}var g;try{g=JSON.parse(t).results[0]}catch(x){}if(!g)return wxDone("Location not found");
+xhr("GET","https://api.open-meteo.com/v1/forecast?latitude="+g.latitude+"&longitude="+g.longitude+"&current=temperature_2m,relative_humidity_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&forecast_days=6&timezone=auto&temperature_unit="+(S.units=="f"?"fahrenheit":"celsius"),null,function(e,t){
+if(e)return wxDone(e);try{wx=JSON.parse(t);wx.name=g.name;wx.at=new Date().getTime();try{localStorage.setItem(K+"wx",t)}catch(x){}wxDone(null)}catch(x){wxDone("Bad data")}})})}
+function wxDone(e){wxBusy=false;var d;if(e){wxErr=e;wxFail++;d=Math.min(30*Math.pow(2,wxFail),S.refresh*60)}else{wxFail=0;d=S.refresh*60}wxT=setTimeout(loadWx,d*1000);renderWx();status()}
+function renderWx(){var h='<h2>Weather'+(wx?" \u2013 "+esc(wx.name||""):"")+'</h2><div class="card pad">';
+if(!wx){h+='<div class="sub">'+(wxBusy?"Loading weather\u2026":"Weather unavailable"+(wxErr?" ("+esc(wxErr)+")":"")+". Weather is provided by Open-Meteo (no key needed). Check the city in Settings and the internet connection.")+"</div>"}
+else{var c=wx.current,d=wx.daily;h+='<div style="display:flex;align-items:center">'+ico(c.weather_code,84)+'<div class="temp" style="margin-left:14px">'+cv(c.temperature_2m)+'</div><div style="margin-left:18px;font-size:18px">'+(WD[c.weather_code]||"")+'<div class="sub">H '+cv(d.temperature_2m_max[0])+'  L '+cv(d.temperature_2m_min[0])+'<br>Humidity '+c.relative_humidity_2m+'%</div></div></div><div class="fc">';
+for(var i=1;i<6;i++){var dt=new Date(d.time[i]+"T12:00:00");h+='<div>'+DAYS[dt.getDay()].substr(0,3)+'<br>'+ico(d.weather_code[i],34)+'<br>'+cv(d.temperature_2m_max[i])+' <span class="sub">'+cv(d.temperature_2m_min[i])+'</span></div>'}
+h+='</div>'+(wxErr?'<div class="sub" style="margin-top:8px">Showing last data ('+esc(wxErr)+'), retrying\u2026</div>':"")}
+$("p-wx").innerHTML=h+'</div>'}
+/* ---- calendar ---- */
+var evs=[],calMsg="";
+function demoEv(){var n=new Date(),y=n.getFullYear(),m=n.getMonth(),d=n.getDate();function e(o,h,t){return{t:new Date(y,m,d+o,h,0),s:t}}return[e(0,19,"Dinner with family"),e(1,7,"Gym"),e(2,15,"Dentist"),e(4,9,"Team meeting")]}
+function pd(s){var m=/^(\d{4})(\d\d)(\d\d)(?:T(\d\d)(\d\d)(\d\d)(Z?))?/.exec(s);if(!m)return null;if(!m[4])return new Date(+m[1],m[2]-1,+m[3]);if(m[7])return new Date(Date.UTC(+m[1],m[2]-1,+m[3],+m[4],+m[5]));return new Date(+m[1],m[2]-1,+m[3],+m[4],+m[5])}
+function loadCal(){calMsg="";if(!S.ics){evs=demoEv();renderCal();return}
+xhr("GET",S.ics,null,function(e,t){if(e){calMsg="Couldn't load calendar feed ("+e+"). Feeds usually need a CORS proxy.";evs=[];renderCal();return}
+var L=t.replace(/\r?\n[ \t]/g,"").split(/\r?\n/),o=[],c=null,i,l;for(i=0;i<L.length;i++){l=L[i];if(l=="BEGIN:VEVENT")c={};else if(l=="END:VEVENT"){if(c&&c.t&&c.s)o.push(c);c=null}else if(c){if(l.indexOf("DTSTART")==0)c.t=pd(l.split(":").pop());else if(l.indexOf("SUMMARY")==0)c.s=l.substr(l.indexOf(":")+1)}}
+o.sort(function(a,b){return a.t-b.t});evs=o;renderCal()})}
+function renderCal(){var n=new Date(),y=n.getFullYear(),m=n.getMonth(),f=new Date(y,m,1).getDay(),dim=new Date(y,m+1,0).getDate(),has={},i,h;
+for(i=0;i<evs.length;i++)if(evs[i].t.getMonth()==m&&evs[i].t.getFullYear()==y)has[evs[i].t.getDate()]=1;
+h='<h2>Calendar'+(S.ics?"":'<span class="badge">SAMPLE EVENTS</span>')+'</h2><div class="card pad"><div style="font-size:20px;margin-bottom:6px">'+MON[m]+' '+y+'</div><table><tr>';
+for(i=0;i<7;i++)h+="<th>"+DAYS[i].substr(0,1)+"</th>";h+="</tr><tr>";var c;for(i=0;i<f;i++)h+="<td></td>";
+for(var d=1;d<=dim;d++){c=(f+d-1)%7;if(c==0&&d>1)h+="</tr><tr>";h+="<td>"+(d==n.getDate()?'<b class="t">'+d+"</b>":"<b>"+d+"</b>")+(has[d]?"<u></u>":"")+"</td>"}
+h+="</tr></table></div><div class='card' style='margin-top:10px'>";
+var lim=new Date(y,m,n.getDate()+S.days),k=0,st=new Date(y,m,n.getDate());
+for(i=0;i<evs.length;i++){var e=evs[i];if(e.t<st||e.t>=lim)continue;k++;var td=e.t.getDate()==n.getDate()&&e.t.getMonth()==m;h+='<div class="ev"><em>'+(td?"Today":DAYS[e.t.getDay()].substr(0,3)+" "+e.t.getDate())+"<br><span class='sub'>"+fmtT(e.t)+"</span></em><div>"+esc(e.s)+"</div></div>"}
+if(!k)h+='<div class="ev"><div class="sub">'+(calMsg||"No upcoming events")+"</div></div>";
+$("p-cal").innerHTML=h+"</div>"}
+/* ---- smart home ---- */
+var devs=[],hmsg="";
+function initDevs(){var a;try{a=JSON.parse(S.devs)}catch(e){a=JSON.parse(DD);hmsg="Device list is not valid JSON; using defaults."}
+devs=[];for(var i=0;i<a.length;i++){var d=a[i];d.on=S.mode=="ha"?null:false;d.bri=60;d.msg="";d.busy=false;devs.push(d)}if(S.mode=="ha")refreshAll()}
+function refreshAll(){for(var i=0;i<devs.length;i++)getState(i)}
+function base(){return S.url.replace(/\/+$/,"")}
+function getState(i){var d=devs[i];if(!S.url){d.msg="No controller URL";renderAcc();return}
+xhr("GET",base()+"/api/states/"+d.id,null,function(e,t){d.busy=false;if(e){d.on=null;d.msg="Unreachable: "+e}else{try{var s=JSON.parse(t);d.on=s.state=="on";if(s.attributes&&s.attributes.brightness)d.bri=Math.round(s.attributes.brightness/2.55);d.msg="Confirmed"}catch(x){d.msg="Bad reply"}}renderAcc();status()})}
+function cmd(i,svc,data){var d=devs[i];if(d.busy)return;d.busy=true;d.msg="Working\u2026";renderAcc();
+if(S.mode!="ha"){if(svc=="turn_off")d.on=false;else{d.on=true;if(data.brightness_pct)d.bri=data.brightness_pct}d.busy=false;d.msg="Simulated";renderAcc();return}
+var b={entity_id:d.id},k;for(k in data)b[k]=data[k];
+xhr("POST",base()+"/api/services/"+d.id.split(".")[0]+"/"+svc,JSON.stringify(b),function(e){if(e){d.busy=false;d.msg="Failed: "+e;renderAcc();return}setTimeout(function(){getState(i)},600)})}
+var CL=[[255,147,41],[255,255,255],[255,59,48],[0,122,255],[76,217,100]];
+function renderAcc(){var live=S.mode=="ha",h='<h2>Accessories<span class="badge'+(live?" live":"")+'">'+(live?"LIVE":"SIMULATED")+'</span></h2><div class="card">',i,d,anyOn=false;
+for(i=0;i<devs.length;i++)if(devs[i].id.indexOf("light.")==0&&devs[i].on)anyOn=true;
+h+='<div class="row"><div class="g">Bedroom Lights<small>Group</small></div><div class="sw'+(anyOn?" on":"")+'" data-a="grp"><i></i></div></div>';
+for(i=0;i<devs.length;i++){d=devs[i];h+='<div class="row"><div class="g">'+esc(d.name)+"<small>"+esc(d.room||"")+" \u00b7 "+(d.on===null?"Unknown":d.on?"On":"Off")+(d.msg?" \u00b7 "+esc(d.msg):"")+'</small></div><div class="sw'+(d.on?" on":"")+'" data-a="tog" data-i="'+i+'"><i></i></div></div>';
+if(d.type=="dim"||d.type=="color")h+='<div class="sl"><input type="range" min="1" max="100" value="'+d.bri+'" data-a="bri" data-i="'+i+'"></div>';
+if(d.type=="color"){h+='<div class="sl dots">';for(var c=0;c<CL.length;c++)h+='<span data-a="col" data-i="'+i+'" data-c="'+c+'" style="background:rgb('+CL[c]+')"></span>';h+="</div>"}}
+h+='</div><div class="btn" data-a="ref">Refresh status</div>'+(hmsg?'<div class="sub">'+esc(hmsg)+"</div>":"");$("p-acc").innerHTML=h}
+/* ---- settings ---- */
+function swr(k,l){return '<div class="row"><div class="g">'+l+'</div><div class="sw'+(S[k]?" on":"")+'" data-k="'+k+'"><i></i></div></div>'}
+function sg(k,l,o){var h='<div class="row"><div class="g">'+l+'</div><div class="seg">';for(var i=0;i<o.length;i++)h+='<span data-k="'+k+'" data-v="'+o[i][0]+'"'+(S[k]==o[i][0]?' class="on"':"")+">"+o[i][1]+"</span>";return h+"</div></div>"}
+function tx(k,l,ph){return '<div class="row"><div class="g">'+l+'</div><input type="text" data-k="'+k+'" value="'+esc(S[k])+'" placeholder="'+(ph||"")+'" autocorrect="off" autocapitalize="off"></div>'}
+function renderSet(){var h='<h2>Clock</h2><div class="card">'+swr("h24","24-Hour Time")+swr("sec","Show Seconds")+swr("date","Show Date")+"</div>";
+h+='<h2>Appearance</h2><div class="card">'+swr("night","Night Mode")+sg("accent","Accent",[["#007aff","Blue"],["#ff9500","Orange"],["#ff2d55","Pink"]])+"</div>";
+h+='<h2>Weather</h2><div class="card">'+tx("loc","City","Trenton")+sg("units","Units",[["f","\u00b0F"],["c","\u00b0C"]])+sg("refresh","Refresh",[[15,"15m"],[30,"30m"],[60,"60m"]])+"</div>";
+h+='<h2>Calendar</h2><div class="card">'+tx("ics","ICS URL","blank = sample events")+sg("days","Days Ahead",[[3,"3"],[7,"7"],[14,"14"]])+"</div>";
+h+='<h2>Smart Home</h2><div class="card">'+sg("mode","Integration",[["demo","Simulated"],["ha","Home Assistant"]])+tx("url","Controller URL","https://ha-proxy.example.com")+
+'<div class="row"><div class="g btn" data-a="test">Test Connection<small id="tr"></small></div></div><textarea data-k="devs" autocapitalize="off" autocorrect="off">'+esc(S.devs)+"</textarea></div>";
+h+='<h2>General</h2><div class="card"><div class="row"><div class="g btn" data-a="all">Refresh All Data</div></div><div class="row"><div class="g btn" style="color:#ff3b30" data-a="reset">Reset Preferences</div></div></div>';
+h+='<h2>Diagnostics</h2><div class="card pad sub">Online: '+(navigator.onLine?"yes":"no")+"<br>Storage: "+(memOk?"OK":"unavailable (settings won\u2019t persist)")+"<br>Weather: "+(wx?new Date(wx.at).toLocaleTimeString():"none")+(wxErr?" ("+esc(wxErr)+")":"")+"<br>Mode: "+S.mode+"<br>"+esc(navigator.userAgent)+"</div>";
+$("p-set").innerHTML=h}
+/* ---- shell ---- */
+var TABS=[["home","Home",'<path d="M4 14L14 5l10 9M7 12v11h14V12"/>'],["wx","Weather",'<path d="M8 21a5 5 0 0 1-1-10 7 7 0 0 1 14 2 4.500 4.500 0 0 1 0 8z"/>'],["cal","Calendar",'<rect x="4" y="6" width="20" height="18"/><path d="M4 11h20M9 3v5M19 3v5"/>'],["acc","Accessories",'<circle cx="14" cy="11" r="6"/><path d="M11 19h6M12 23h4"/>'],["set","Settings",'<circle cx="14" cy="14" r="4"/><circle cx="14" cy="14" r="9"/>']];
+var tab="home";
+function drawTabs(){var h="";for(var i=0;i<TABS.length;i++)h+='<div class="tab'+(TABS[i][0]==tab?" on":"")+'" data-t="'+TABS[i][0]+'"><svg viewBox="0 0 28 28">'+TABS[i][2]+"</svg>"+TABS[i][1]+"</div>";$("tabs").innerHTML=h}
+function setTab(t){tab=t;$("main").setAttribute("data-t",t);$("ttl").innerHTML=t=="home"?"Bedroom":TABS[[].concat(TABS).map(function(x){return x[0]}).indexOf(t)][1];drawTabs();if(t=="set")renderSet();$("main").scrollTop=0}
+function status(){var on=navigator.onLine&&wx&&!wxErr;$("st").innerHTML='<i class="'+(on?"ok":(navigator.onLine?"":"bad"))+'"></i>'+(on?"Connected":navigator.onLine?"Limited":"Offline")}
+function apply(){document.body.className=S.night?"night":"";var s=$("acs");if(!s){s=document.createElement("style");s.id="acs";document.head.appendChild(s)}
+var a=S.accent;s.innerHTML=".tab.on,.btn,.ev em{color:"+a+"}.seg{border-color:"+a+"}.seg span{color:"+a+";border-color:"+a+"}.seg span.on{background:"+a+";color:#fff}td b.t{background:"+a+"}";tick()}
+function full(){initDevs();renderAcc();renderCal();loadCal();loadWx();renderSet();tick()}
+document.addEventListener("click",function(ev){var t=ev.target,a;while(t&&t!==document&&!(t.getAttribute&&(t.getAttribute("data-a")||t.getAttribute("data-k")||t.getAttribute("data-t"))))t=t.parentNode;if(!t||t===document)return;
+var tt=t.getAttribute("data-t");if(tt&&t.className.indexOf("tab")>=0){setTab(tt);return}
+var k=t.getAttribute("data-k");if(k){var v=t.getAttribute("data-v");if(t.className.indexOf("sw")>=0)S[k]=!S[k];else if(v!==null)S[k]=isNaN(+v)?v:+v;else return;save();apply();renderSet();if(k=="units"||k=="refresh")loadWx();if(k=="days")renderCal();if(k=="mode")full();return}
+a=t.getAttribute("data-a");var i=+t.getAttribute("data-i"),j;
+if(a=="tog")cmd(i,devs[i].on?"turn_off":"turn_on",{});
+else if(a=="grp"){var anyOn=false;for(j=0;j<devs.length;j++)if(devs[j].id.indexOf("light.")==0&&devs[j].on)anyOn=true;for(j=0;j<devs.length;j++)if(devs[j].id.indexOf("light.")==0){devs[j].busy=false;cmd(j,anyOn?"turn_off":"turn_on",{})}}
+else if(a=="col")cmd(i,"turn_on",{rgb_color:CL[+t.getAttribute("data-c")]});
+else if(a=="ref"){if(S.mode=="ha")refreshAll();else{hmsg="";renderAcc()}}
+else if(a=="all"){full()}
+else if(a=="reset"){try{localStorage.removeItem(K);localStorage.removeItem(K+"wx")}catch(e){}location.reload()}
+else if(a=="test"){var r=$("tr");if(!S.url){r.innerHTML="Set a controller URL first";return}r.innerHTML="Testing\u2026";xhr("GET",base()+"/api/",null,function(e){r.innerHTML=e?"Failed: "+e:"Connected"})}},false);
+document.addEventListener("change",function(ev){var t=ev.target,k=t.getAttribute("data-k"),a=t.getAttribute("data-a");
+if(k&&(t.type=="text"||t.tagName=="TEXTAREA")){S[k]=t.value;save();if(k=="loc")loadWx();if(k=="ics")loadCal();if(k=="devs"||k=="url")full()}
+else if(a=="bri")cmd(+t.getAttribute("data-i"),"turn_on",{brightness_pct:+t.value})},false);
+window.addEventListener("online",function(){wxFail=0;loadWx();status()});window.addEventListener("offline",status);
+load();apply();drawTabs();setTab("home");
+try{var c=localStorage.getItem(K+"wx");if(c){wx=JSON.parse(c);wx.at=wx.at||0}}catch(e){}
+full();setInterval(tick,1000);setInterval(function(){renderCal()},600000);status();
+})();
+</script></body></html>
